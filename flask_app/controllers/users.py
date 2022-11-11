@@ -18,11 +18,14 @@ def users():
 def new():
     return render_template("new_user.html")
 
-@app.route('/user/create',methods=['POST'])
+@app.route('/user/create', methods=['POST'])
 def create():
-    print(request.form)
-    User.save(request.form)
-    return redirect('/users')
+    if User.is_valid_user(request.form):
+        # print(request.form)
+        User.save(request.form)
+        return redirect('/users')
+    else:
+        return redirect('/user/new')
 
 @app.route('/user/edit/<int:id>')
 def edit(id):

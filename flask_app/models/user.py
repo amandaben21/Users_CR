@@ -1,4 +1,8 @@
 from flask_app.config.mysqlconnection import connectToMySQL
+from flask import flash
+import re
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$') 
+
 
 class User:
     def __init__(self, data):
@@ -11,6 +15,26 @@ class User:
 
     def full_name(self):
         return f"{self.first_name} {self.last_name}"
+    
+    @staticmethod
+    def is_valid_user(user):
+        is_valid = True
+
+        if len(user["first_name"]) <= 0:
+            is_valid = False
+            flash("First name is required.")
+        if len(user["last_name"]) <= 0:
+            is_valid = False
+            flash("Last name is required.")
+        if len(user["email"]) <= 0:
+            is_valid = False
+            flash("Email is required.")
+        if not EMAIL_REGEX.match(user['email']): 
+            flash("Invalid email format.")
+            is_valid = False
+        
+        print("user is valid:", is_valid)
+        return is_valid
 
     @classmethod
     def get_all(cls):
